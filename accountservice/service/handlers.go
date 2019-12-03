@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -33,7 +34,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 // HealthCheck --
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	dbUp := DBClient.Check()
-	if dbUp {
+	if dbUp && isHealthy {
 		data, _ := json.Marshal(healthCheckResponse{Status: "UP"})
 		writeJSONResponse(w, http.StatusOK, data)
 	} else {
@@ -51,4 +52,20 @@ func writeJSONResponse(w http.ResponseWriter, status int, data []byte) {
 
 type healthCheckResponse struct {
 	Status string `json:"status"`
+}
+
+var isHealthy = true
+
+// SetHealthyState --
+func SetHealthyState(w http.ResponseWriter, r *http.Request) {
+	var state, err = strconv.ParseBool(mux.Vars(r)["state"])
+
+	if err != nil {
+		fmt.Println("Invalid request to SetHealthyState, allowed values are true or false.")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	isHealthy = state
+	w.WriteHeader(http.StatusOK)
 }

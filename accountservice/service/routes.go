@@ -17,10 +17,7 @@ var routes = Routes{
 	Route{
 		"GetAccount",
 		"Get",
-		"/accounts/{accountId}",
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.Write([]byte("{\"result\":\"OK\"}"))
-		},
+		"/accounts/{accountID}",
+		GetAccount,
 	},
 }

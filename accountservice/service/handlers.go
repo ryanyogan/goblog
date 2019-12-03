@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/ryanyogan/goblog/dbclient"
+	"github.com/ryanyogan/goblog/accountservice/dbclient"
 )
 
 // DBClient defines a single instance of the Bolt DB Instance

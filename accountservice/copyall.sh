@@ -12,6 +12,7 @@ echo built `pwd`
 export GOOS=darwin
 
 docker build -t ryanyogan/accountservice .
+docker push ryanyogan/accountservice:latest
 
 docker service rm accountservice
 docker service create \

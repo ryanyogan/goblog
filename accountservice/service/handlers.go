@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"strconv"
 
@@ -18,6 +19,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	var accountID = mux.Vars(r)["accountID"]
 
 	account, err := DBClient.QueryAccount(accountID)
+	account.ServedBy = getIP()
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -29,6 +31,21 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Length", strconv.Itoa(len(data)))
 	w.WriteHeader(http.StatusOK)
 	w.Write(data)
+}
+
+func getIP() string {
+	addresses, err := net.InterfaceAddrs()
+	if err != nil {
+		return "error"
+	}
+	for _, address := range addresses {
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+	panic("Unabled to determine local IP address (non loopback). Exiting.")
 }
 
 // HealthCheck --
